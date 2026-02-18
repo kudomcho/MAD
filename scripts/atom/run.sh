@@ -1,21 +1,17 @@
 #!/bin/bash
-###############################################################################
-# MIT License
-###############################################################################
-
 trap '' HUP
 set -e
 set -x
 
-# ---- Install deps (ONLY if you really must) ----
-# pip install -qqq lm-eval[api]
+command -v curl >/dev/null || {
+  echo "[ERROR] curl not found"
+  exit 1
+}
 
-# ---- Clone benchmark repo ----
 if [[ ! -d bench_serving ]]; then
   git clone https://github.com/kimbochen/bench_serving.git
 fi
 
-# ---- Start server (detached) ----
 nohup python3 -m atom.entrypoints.openai_server \
   --model openai/gpt-oss-120b \
   -tp 8 \
@@ -26,7 +22,6 @@ nohup python3 -m atom.entrypoints.openai_server \
 
 SERVER_PID=$!
 
-# ---- Wait for server readiness ----
 for i in {1..300}; do
   if curl -sf http://127.0.0.1:8000/v1/models >/dev/null; then
     break
@@ -36,15 +31,17 @@ done
 
 if ! curl -sf http://127.0.0.1:8000/v1/models >/dev/null; then
   echo "[ERROR] Server failed to start"
+  kill "${SERVER_PID}" || true
   exit 1
 fi
 
-# ---- Run your benchmark HERE ----
-# python bench_serving/benchmark_serving.py ...
+# ---- RUN BENCHMARK HERE ----
+python bench_serving/benchmark_serving.py ...
 
 # ---- Cleanup ----
 kill "${SERVER_PID}" || true
-# move the output csv to parent directory
 
 OUTPUT_CSV="perf_gpt-oss-120b.csv"
-mv $OUTPUT_CSV ../
+if [[ -f "$OUTPUT_CSV" ]]; then
+  mv "$OUTPUT_CSV" ../
+fi
