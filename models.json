@@ -92,7 +92,7 @@
     "name": "pyt_atom_gpt-oss-120b",
     "url": "",
     "dockerfile": "docker/pyt_atom",
-    "scripts": "scripts/vllm/run.sh",
+    "scripts": "scripts/atom/run.sh",
     "data": "huggingface",
     "n_gpus": "-1",
     "owner": "mad.support@amd.com",
