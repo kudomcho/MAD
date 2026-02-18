@@ -105,7 +105,8 @@
       "inference"
     ],
     "timeout": -1,
-
+    "args":
+     ""
   },
   {
     "name": "pyt_vllm_llama-2-70b",
