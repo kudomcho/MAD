@@ -24,92 +24,38 @@
 # SOFTWARE.
 #
 #################################################################################
+set -ex
 
-set -euo pipefail
-set -x
-
-############################
 # Preliminary setup
-############################
 export HF_HUB_CACHE="/myworkspace"
+MAD_MODEL_NAME=$(echo $MAD_MODEL_NAME | tr "/" "_")
 
-SERVER_HOST=0.0.0.0
-SERVER_PORT=8000
-SERVER_URL="http://127.0.0.1:${SERVER_PORT}/v1/models"
+while [[ "$#" -gt 0 ]]; do
+    case $1 in
+        --model_repo) MODEL="$2"; shift ;;
+        --config) CONFIG_ARG="$2"; shift ;;
+        --benchmark) BENCHMARK_ARG="$2"; shift ;;
+        *) echo "Unknown parameter passed: $1"; usage ;;
+    esac
+    shift
+done
 
-############################
-# Dependencies
-############################
-pip install -qqq lm-eval[api]
-
-############################
-# Clone benchmark repo
-############################
-if [[ ! -d bench_serving ]]; then
-  git clone https://github.com/kimbochen/bench_serving.git
+# By default run all benchmarks in configs/default.yaml; accept either CLI or env variable overrides
+if [[ -z "$BENCHMARK" ]]; then
+    BENCHMARK=${BENCHMARK_ARG:-"all"}
+fi
+if [[ -z "$CONFIG" ]]; then
+    CONFIG=${CONFIG_ARG:-"configs/default.yaml"}
 fi
 
-############################
-# Start GPT-OSS server
-############################
-echo "[INFO] Starting GPT-OSS server..."
+# install lm-eval for accuracy testing
+pip install -qqq lm-eval[api]
 
-python3 -m atom.entrypoints.openai_server \
-  --model openai/gpt-oss-120b \
-  -tp 8 \
-  --kv_cache_dtype fp8 \
-  --host ${SERVER_HOST} \
-  --port ${SERVER_PORT} \
-  > server.log 2>&1 &
-
-SERVER_PID=$!
-echo "[INFO] Server PID: ${SERVER_PID}"
-
-cleanup() {
-  echo "[INFO] Shutting down server..."
-  kill ${SERVER_PID} 2>/dev/null || true
-}
-trap cleanup EXIT INT TERM
-
-############################
-# Wait for readiness
-############################
-echo "[INFO] Waiting for server to be ready..."
-until curl -sf ${SERVER_URL} >/dev/null; do
-  sleep 2
-done
-echo "[INFO] Server is ready."
-
-############################
-# Inline benchmark client
-############################
-MODEL="/it-share/gpt-oss-120b"
-ISL_VALUES=(1)
-OSL=1000
-CONC_VALUES=(2 4 8 16 32 64 128 256 512)
-RESULT_FILENAME=result
-
-for ISL in "${ISL_VALUES[@]}"; do
-  for CONC in "${CONC_VALUES[@]}"; do
-    echo "[INFO] ISL=${ISL}, CONC=${CONC}"
-    python bench_serving/benchmark_serving.py \
-      --backend=vllm \
-      --base-url="http://localhost:${SERVER_PORT}" \
-      --endpoint=/v1/completions \
-      --model="${MODEL}" \
-      --dataset-name=random \
-      --random-input-len="${ISL}" \
-      --random-output-len="${OSL}" \
-      --num-prompts=$(( CONC * 4 )) \
-      --max-concurrency="${CONC}" \
-      --random-range-ratio 1.0 \
-      --request-rate=inf \
-      --ignore-eos \
-      --save-result \
-      --percentile-metrics="ttft,tpot,itl,e2el" \
-      --result-dir=./ \
-      --result-filename="${RESULT_FILENAME}_isl${ISL}_conc${CONC}.json"
-  done
-done
-
-echo "[INFO] Benchmark finished."
+git clone git clone https://github.com/kimbochen/bench_serving.git
+# # Run benchmark; use -u to make python prints unbuffered
+# python3 -u run_atom.py --config $CONFIG --model $MODEL --benchmark $BENCHMARK
+python3 -m atom.entrypoints.openai_server --model openai/gpt-oss-120b -tp 8 --kv_cache_dtype fp8 --host 0.0.0.0 --port 8000 
+# move the output csv to parent directory
+MODEL_NAME=$(basename $MODEL)
+OUTPUT_CSV="perf_${MODEL_NAME}.csv"
+mv $OUTPUT_CSV ../
