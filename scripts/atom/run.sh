@@ -6,7 +6,7 @@
 trap '' HUP
 set -e
 set -x
-
+MAD_MODEL_NAME=$(echo $MAD_MODEL_NAME | tr "/" "_")
 # ---- Install deps (ONLY if you really must) ----
 # pip install -qqq lm-eval[api]
 
@@ -44,3 +44,7 @@ fi
 
 # ---- Cleanup ----
 kill "${SERVER_PID}" || true
+# move the output csv to parent directory
+MODEL_NAME=$(basename $MODEL)
+OUTPUT_CSV="perf_${MODEL_NAME}.csv"
+mv $OUTPUT_CSV ../
