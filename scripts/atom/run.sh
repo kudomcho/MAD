@@ -41,8 +41,6 @@ SERVER_URL="http://127.0.0.1:${SERVER_PORT}/v1/models"
 # Dependencies
 ############################
 pip install -qqq lm-eval[api]
-apt-get update -qq
-apt-get install -y curl vim
 
 ############################
 # Clone benchmark repo
