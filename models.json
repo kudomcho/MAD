@@ -105,8 +105,7 @@
       "inference"
     ],
     "timeout": -1,
-    "args":
-     "--model_repo openai/gpt-oss-120b --config configs/default.yaml"
+
   },
   {
     "name": "pyt_vllm_llama-2-70b",
