@@ -88,6 +88,26 @@
     "args":
      "--model_repo openai/gpt-oss-120b --config configs/default.yaml"
   },
+    {
+    "name": "pyt_atom_gpt-oss-120b",
+    "url": "",
+    "dockerfile": "docker/pyt_atom",
+    "scripts": "scripts/vllm/run.sh",
+    "data": "huggingface",
+    "n_gpus": "-1",
+    "owner": "mad.support@amd.com",
+    "training_precision": "",
+    "multiple_results": "perf_gpt-oss-120b.csv",
+    "tags": [
+      "pyt",
+      "vllm",
+      "vllm_default",
+      "inference"
+    ],
+    "timeout": -1,
+    "args":
+     "--model_repo openai/gpt-oss-120b --config configs/default.yaml"
+  },
   {
     "name": "pyt_vllm_llama-2-70b",
     "url": "",
