@@ -26,27 +26,27 @@
 #################################################################################
 set -ex
 
-# Preliminary setup
-export HF_HUB_CACHE="/myworkspace"
-MAD_MODEL_NAME=$(echo $MAD_MODEL_NAME | tr "/" "_")
+# # Preliminary setup
+# export HF_HUB_CACHE="/myworkspace"
+# MAD_MODEL_NAME=$(echo $MAD_MODEL_NAME | tr "/" "_")
 
-while [[ "$#" -gt 0 ]]; do
-    case $1 in
-        --model_repo) MODEL="$2"; shift ;;
-        --config) CONFIG_ARG="$2"; shift ;;
-        --benchmark) BENCHMARK_ARG="$2"; shift ;;
-        *) echo "Unknown parameter passed: $1"; usage ;;
-    esac
-    shift
-done
+# while [[ "$#" -gt 0 ]]; do
+#     case $1 in
+#         --model_repo) MODEL="$2"; shift ;;
+#         --config) CONFIG_ARG="$2"; shift ;;
+#         --benchmark) BENCHMARK_ARG="$2"; shift ;;
+#         *) echo "Unknown parameter passed: $1"; usage ;;
+#     esac
+#     shift
+# done
 
-# By default run all benchmarks in configs/default.yaml; accept either CLI or env variable overrides
-if [[ -z "$BENCHMARK" ]]; then
-    BENCHMARK=${BENCHMARK_ARG:-"all"}
-fi
-if [[ -z "$CONFIG" ]]; then
-    CONFIG=${CONFIG_ARG:-"configs/default.yaml"}
-fi
+# # By default run all benchmarks in configs/default.yaml; accept either CLI or env variable overrides
+# if [[ -z "$BENCHMARK" ]]; then
+#     BENCHMARK=${BENCHMARK_ARG:-"all"}
+# fi
+# if [[ -z "$CONFIG" ]]; then
+#     CONFIG=${CONFIG_ARG:-"configs/default.yaml"}
+# fi
 
 # install lm-eval for accuracy testing
 pip install -qqq lm-eval[api]
