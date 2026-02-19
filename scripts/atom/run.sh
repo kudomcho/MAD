@@ -48,8 +48,12 @@ if [[ ! -d bench_serving ]]; then
   git clone https://github.com/kimbochen/bench_serving.git
 fi
 
+echo "[DEBUG] PWD=$(pwd)"
+ls -lah
+ls -lah run_atom_server_and_client.py || echo "[DEBUG] run_atom_server_and_client.py NOT FOUND"
+
 # ---- Run Atom server + client orchestrator ----
-python3 -u run_atom_server_and_client.py \
+python3 -u run_atom.py \
   --model "$MODEL" || {
     echo "[ERROR] run_atom_server_and_client.py failed"
     exit 2
