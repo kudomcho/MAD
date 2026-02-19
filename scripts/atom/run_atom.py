@@ -246,7 +246,7 @@ def run_serving(model, config):
     )
     server_cmd = (
         "python3 -m atom.entrypoints.openai_server "
-        f"{model} "
+        f"--model {model} "
         f"--kv_cache_dtype fp8 "
         f"-tp {config['tp']} "
         f"--host 0.0.0.0"
