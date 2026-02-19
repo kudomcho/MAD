@@ -288,7 +288,7 @@ def run_serving(model, config):
             f"--max-concurrency {config['max_concurrency']} "
             f"--num-prompts {config['num_prompts']} "
             f"--trust-remote-code "
-            f"--metric_percentiles='99' "
+            f"--metric-percentiles='99' "
             f"--save-result --percentile-metrics tpot,itl,e2el "
             f"--result-filename {output_json}"
         )
