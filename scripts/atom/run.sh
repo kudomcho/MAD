@@ -1,19 +1,66 @@
 #!/bin/bash
-trap '' HUP
-set -e
-set -x
+###############################################################################
+#
+# MIT License
+#
+# Copyright (c) Advanced Micro Devices, Inc.
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+#
+#################################################################################
+#!/bin/bash
+###############################################################################
+# MIT License
+###############################################################################
+set -ex
 
-nohup python3 -m atom.entrypoints.openai_server \
-  --model openai/gpt-oss-120b \
-  -tp 8 \
-  --kv_cache_dtype fp8 \
-  --host 0.0.0.0 \
-  --port 8000 \
-  > server.log 2>&1 &
+# ---- Preliminary setup ----
+export HF_HUB_CACHE="/myworkspace"
 
-SERVER_PID=$!
+# ---- Parse args ----
+while [[ "$#" -gt 0 ]]; do
+  case $1 in
+    --model_repo) MODEL="$2"; shift ;;
+    --config) CONFIG="$2"; shift ;;
+    *) echo "Unknown parameter passed: $1"; exit 1 ;;
+  esac
+  shift
+done
 
-echo "Server running with PID ${SERVER_PID}"
+if [[ -z "$MODEL" ]]; then
+  echo "[ERROR] --model_repo is required"
+  exit 1
+fi
 
-# Block forever so MAD doesn't kill us
-wait ${SERVER_PID}
+# ---- Clone benchmark repo (idempotent) ----
+if [[ ! -d bench_serving ]]; then
+  git clone https://github.com/kimbochen/bench_serving.git
+fi
+
+# ---- Run Atom server + client orchestrator ----
+python3 run_atom_server_and_client.py \
+  --model "$MODEL"
+
+# ---- (Optional) collect CSV if you added aggregation ----
+MODEL_NAME=$(basename "$MODEL")
+CSV="perf_${MODEL_NAME}.csv"
+if [[ -f "$CSV" ]]; then
+  mv "$CSV" ../
+fi
+
