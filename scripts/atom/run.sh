@@ -23,11 +23,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 #
-#################################################################################
-#!/bin/bash
-###############################################################################
-# MIT License
-###############################################################################
 set -ex
 
 # ---- Preliminary setup ----
@@ -54,8 +49,11 @@ if [[ ! -d bench_serving ]]; then
 fi
 
 # ---- Run Atom server + client orchestrator ----
-python3 run_atom_server_and_client.py \
-  --model "$MODEL"
+python3 -u run_atom_server_and_client.py \
+  --model "$MODEL" || {
+    echo "[ERROR] run_atom_server_and_client.py failed"
+    exit 2
+}
 
 # ---- (Optional) collect CSV if you added aggregation ----
 MODEL_NAME=$(basename "$MODEL")
