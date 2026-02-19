@@ -278,7 +278,6 @@ def run_serving(model, config):
         bench_cmd = (
             "python bench_serving/benchmark_serving.py  "
             f"--model {model} "
-            f"--percentile-metrics tpot,itl,e2el "
             f"--backend=vllm "
             f"--base-url='http://localhost:8000' "
             f"--dataset-name random "
@@ -289,7 +288,7 @@ def run_serving(model, config):
             f"--max-concurrency {config['max_concurrency']} "
             f"--num-prompts {config['num_prompts']} "
             f"--trust-remote-code "
-            f"--save-result "
+            f"--save-result --percentile-metrics tpot,itl,e2el "
             f"--result-filename {output_json}"
         )
         bench_args = config.pop('bench_args', {})
