@@ -23,33 +23,38 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 #
+#################################################################################
 set -ex
 
-# ---- Preliminary setup ----
+# Preliminary setup
 export HF_HUB_CACHE="/myworkspace"
+MAD_MODEL_NAME=$(echo $MAD_MODEL_NAME | tr "/" "_")
 
-# ---- Parse args ----
 while [[ "$#" -gt 0 ]]; do
-  case $1 in
-    --model_repo) MODEL="$2"; shift ;;
-    --config) CONFIG="$2"; shift ;;
-    *) echo "Unknown parameter passed: $1"; exit 1 ;;
-  esac
-  shift
+    case $1 in
+        --model_repo) MODEL="$2"; shift ;;
+        --config) CONFIG_ARG="$2"; shift ;;
+        --benchmark) BENCHMARK_ARG="$2"; shift ;;
+        *) echo "Unknown parameter passed: $1"; usage ;;
+    esac
+    shift
 done
 
-
-# ---- Run Atom server + client orchestrator ----
-python3 -u run_atom.py \
-  --model "$MODEL" || {
-    echo "[ERROR] run_atom.py failed"
-    exit 2
-}
-
-# ---- (Optional) collect CSV if you added aggregation ----
-MODEL_NAME=$(basename "$MODEL")
-CSV="perf_${MODEL_NAME}.csv"
-if [[ -f "$CSV" ]]; then
-  mv "$CSV" ../
+# By default run all benchmarks in configs/default.yaml; accept either CLI or env variable overrides
+if [[ -z "$BENCHMARK" ]]; then
+    BENCHMARK=${BENCHMARK_ARG:-"all"}
+fi
+if [[ -z "$CONFIG" ]]; then
+    CONFIG=${CONFIG_ARG:-"configs/default.yaml"}
 fi
 
+# install lm-eval for accuracy testing
+pip install -qqq lm-eval[api]
+
+# Run benchmark; use -u to make python prints unbuffered
+python3 -u run_atom.py --config $CONFIG --model $MODEL --benchmark $BENCHMARK
+
+# move the output csv to parent directory
+MODEL_NAME=$(basename $MODEL)
+OUTPUT_CSV="perf_${MODEL_NAME}.csv"
+mv $OUTPUT_CSV ../

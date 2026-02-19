@@ -247,9 +247,8 @@ def run_serving(model, config):
     server_cmd = (
         "python3 -m atom.entrypoints.openai_server "
         f"{model} "
-        f"--kv_cache_dtype {config['dtype']} "
+        f"--kv_cache_dtype fp8 "
         f"-tp {config['tp']} "
-        f"--trust-remote-code "
         f"--host 0.0.0.0"
         f" --port 8000"
     )
@@ -284,6 +283,7 @@ def run_serving(model, config):
             f"--base-url='http://localhost:8000'"
             f"--dataset-name random "
             f"--ignore-eos "
+            f"--random-input-len=1 --random-output-len=1000"
             f"--request-rate=inf"
             f"--max-concurrency {config['max_concurrency']} "
             f"--num-prompts {config['num_prompts']} "
