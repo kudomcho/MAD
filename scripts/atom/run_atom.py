@@ -253,10 +253,10 @@ def run_serving(model, config):
         f" --port 8000"
     )
     # pop env and extra args from config
-    # env = config.pop('env', "")
-    # extra_args = config.pop('extra_args', "")
-    # server_cmd = f"{env} {server_cmd} {extra_args}".strip()
-    # config["cmd"] = server_cmd
+    env = config.pop('env', "")
+    extra_args = config.pop('extra_args', "")
+    server_cmd = f"{env} {server_cmd} {extra_args}".strip()
+    config["cmd"] = server_cmd
 
     # start server
     print(server_cmd)
