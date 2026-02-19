@@ -288,8 +288,6 @@ def run_serving(model, config):
             f"--request-rate=inf"
             f"--max-concurrency {config['max_concurrency']} "
             f"--num-prompts {config['num_prompts']} "
-            f"--random-input-len {config['inp']} "
-            f"--random-output-len {config['out']} "
             f"--trust-remote-code "
             f"--save-result "
             f"--result-filename {output_json}"
