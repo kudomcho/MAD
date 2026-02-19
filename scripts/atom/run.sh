@@ -50,7 +50,7 @@ fi
 
 # install lm-eval for accuracy testing
 pip install -qqq lm-eval[api]
-
+git clone https://github.com/kimbochen/bench_serving.git
 # Run benchmark; use -u to make python prints unbuffered
 python3 -u run_atom.py --config $CONFIG --model $MODEL --benchmark $BENCHMARK
 
