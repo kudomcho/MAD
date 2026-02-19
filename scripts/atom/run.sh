@@ -38,24 +38,11 @@ while [[ "$#" -gt 0 ]]; do
   shift
 done
 
-if [[ -z "$MODEL" ]]; then
-  echo "[ERROR] --model_repo is required"
-  exit 1
-fi
-
-# ---- Clone benchmark repo (idempotent) ----
-if [[ ! -d bench_serving ]]; then
-  git clone https://github.com/kimbochen/bench_serving.git
-fi
-
-echo "[DEBUG] PWD=$(pwd)"
-ls -lah
-ls -lah run_atom_server_and_client.py || echo "[DEBUG] run_atom_server_and_client.py NOT FOUND"
 
 # ---- Run Atom server + client orchestrator ----
 python3 -u run_atom.py \
   --model "$MODEL" || {
-    echo "[ERROR] run_atom_server_and_client.py failed"
+    echo "[ERROR] run_atom.py failed"
     exit 2
 }
 
