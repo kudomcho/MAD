@@ -513,7 +513,7 @@ def main():
                 results = run_accuracy(model, config)
             else:
                 raise ValueError(f"Unknown benchmark: {benchmark}")
-            print(result)
+            print(results)
             # Write results to csv
             for result in results:
                 writer.writerow(result)
