@@ -279,6 +279,7 @@ def run_serving(model, config):
             "python bench_serving/benchmark_serving.py  "
             f"--model {model} "
             f"--backend=vllm "
+            f"--endpoint=/v1/completions "
             f"--base-url='http://localhost:8000' "
             f"--dataset-name random "
             f"--ignore-eos "
@@ -288,8 +289,9 @@ def run_serving(model, config):
             f"--max-concurrency {config['max_concurrency']} "
             f"--num-prompts {config['num_prompts']} "
             f"--trust-remote-code "
-            f"--metric-percentiles='99' "
-            f"--save-result --percentile-metrics tpot,itl,e2el "
+            f"--metric-percentiles=99 "
+            f"--save-result "
+            f"--percentile-metrics tpot,itl,e2el "
             f"--result-filename {output_json}"
         )
         bench_args = config.pop('bench_args', {})
@@ -511,7 +513,7 @@ def main():
                 results = run_accuracy(model, config)
             else:
                 raise ValueError(f"Unknown benchmark: {benchmark}")
-            
+            print(result)
             # Write results to csv
             for result in results:
                 writer.writerow(result)
