@@ -15,11 +15,11 @@
 ## gpt-oss requires AITER unified attention and performs best with block-size 64 and FULL_AND_PIECEWISE cudagraph mode
 - benchmark: serving
   model: openai/gpt-oss-120b
-  tp: 8
-  inp: 1024
-  out: 1024
+  tp: 1 8
+  inp: 1024 8192
+  out: 1024 8192
   dtype: auto
-  max_concurrency: 1
+  max_concurrency: 2 4 8 16 32 64 128 256 512
   env:
     VLLM_ROCM_USE_AITER_MHA: 0
     VLLM_ROCM_USE_AITER_UNIFIED_ATTENTION: 1
