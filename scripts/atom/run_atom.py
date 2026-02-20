@@ -467,7 +467,7 @@ def main():
         OUTPUT_CSV = "perf_" + os.path.basename(model) + ".csv"
         header_write = 0 if os.path.exists(OUTPUT_CSV) else 1
         with open(OUTPUT_CSV, "a+", newline="") as outf:
-            writer = csv.DictWriter(outf, delimiter=",", fieldnames=CSV_HEADER)
+            writer = csv.DictWriter(outf, delimiter=",", fieldnames=CSV_HEADER, extrasaction="ignore",)
             if header_write:
                 writer.writeheader()
                 outf.flush()
