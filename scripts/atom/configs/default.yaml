@@ -19,7 +19,7 @@
   inp: 1024
   out: 1024
   dtype: auto
-  max_concurrency: 1 8 32 128
+  max_concurrency: 1
   env:
     VLLM_ROCM_USE_AITER_MHA: 0
     VLLM_ROCM_USE_AITER_UNIFIED_ATTENTION: 1
