@@ -2,6 +2,17 @@
 
 ## DeepSeek AITER MLA currently only supports --block-size 1
 - benchmark: serving
+  model: deepseek-ai/DeepSeek-V3
+  tp: 8
+  inp: 1024
+  out: 1024
+  dtype: auto
+  max_concurrency: 8
+  extra_args:
+    async-scheduling: True
+    block-size: 1
+
+- benchmark: serving
   model: deepseek-ai/DeepSeek-R1-0528
   tp: 8
   inp: 1024
@@ -15,11 +26,11 @@
 ## gpt-oss requires AITER unified attention and performs best with block-size 64 and FULL_AND_PIECEWISE cudagraph mode
 - benchmark: serving
   model: openai/gpt-oss-120b
-  tp: 1 8
+  tp: 8
   inp: 1024 8192
   out: 1024 8192
   dtype: auto
-  max_concurrency: 2 4 8 16 32 64 128 256 512
+  max_concurrency: 2 4 
   env:
     VLLM_ROCM_USE_AITER_MHA: 0
     VLLM_ROCM_USE_AITER_UNIFIED_ATTENTION: 1

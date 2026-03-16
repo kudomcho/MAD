@@ -49,6 +49,65 @@
      "--model_repo deepseek-ai/DeepSeek-R1-0528 --config configs/default.yaml"
   },
   {
+    "name": "pyt_atom_deepseek-r1",
+    "url": "",
+    "dockerfile": "docker/pyt_atom",
+    "scripts": "scripts/atom/run.sh",
+    "data": "huggingface",
+    "n_gpus": "-1",
+    "owner": "mad.support@amd.com",
+    "training_precision": "",
+    "multiple_results": "perf_atom_DeepSeek-R1-0528.csv",
+    "tags": [
+      "pyt",
+      "vllm",
+      "vllm_default",
+      "inference"
+    ],
+    "timeout": -1,
+    "args":
+     "--model_repo deepseek-ai/DeepSeek-R1-0528 --config configs/default.yaml"
+  },
+
+   {
+    "name": "primus_pyt_train_deepseek-v3-16b",
+    "url": "",
+    "dockerfile": "docker/primus_pytorch_train",
+    "scripts": "scripts/primus/pytorch_train/run.sh",
+    "data": "huggingface",
+    "n_gpus": "-1",
+    "owner": "mad.support@amd.com",
+    "training_precision": "",
+    "multiple_results": "perf_primus-pytorch-DeepSeek-V3-16B.csv",
+    "tags": [
+      "pyt",
+      "primus",
+      "training"
+    ],
+    "timeout": -1,
+    "args": "--model_repo primus_pyt_train_deepseek-v3-16b"
+  },
+    {
+    "name": "pyt_atom_deepseek-v3",
+    "url": "",
+    "dockerfile": "docker/pyt_atom",
+    "scripts": "scripts/atom/run.sh",
+    "data": "huggingface",
+    "n_gpus": "-1",
+    "owner": "mad.support@amd.com",
+    "training_precision": "",
+    "multiple_results": "perf_atom_DeepSeek-V3.csv",
+    "tags": [
+      "pyt",
+      "vllm",
+      "vllm_default",
+      "inference"
+    ],
+    "timeout": -1,
+    "args":
+     "--model_repo deepseek-ai/DeepSeek-V3 --config configs/default.yaml"
+  },
+  {
     "name": "pyt_vllm_gpt-oss-20b",
     "url": "",
     "dockerfile": "docker/pyt_vllm",
@@ -1086,6 +1145,7 @@
     "timeout": -1,
     "args": "--model_repo primus_pyt_train_deepseek-v3-16b"
   },
+  
   {
     "name": "pyt_train_mochi-1",
     "url": "",
